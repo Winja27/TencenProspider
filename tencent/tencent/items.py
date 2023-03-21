@@ -9,5 +9,4 @@ import scrapy
 class TencentItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
-    label = scrapy.Field()
     content = scrapy.Field()
