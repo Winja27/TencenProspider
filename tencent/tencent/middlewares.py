@@ -49,16 +49,17 @@ class TencentDownloaderMiddleware:
         bro = spider.bro  # 获取了在爬虫类中定义的浏览器对象
         if request.url in spider.models_urls:
             bro.get(request.url)  # 不同板块所对应的url进行请求
-            sleep(2)
+            sleep(3)
             page_text = bro.page_source
             # 针对定位到的这些response进行篡改
             # 实例化一个新的响应对象，要包含动态加载出来的新闻内容
             new_response = HtmlResponse(url=request.url, body=page_text, encoding='utf-8', request=request)
+            response = new_response
             # 我们需要用selenium来得到包含动态加载内容的
             # 所以需要实例化一个浏览器对象
             # 不可能每执行一次函数就实例化一次
             # 所以去爬虫主文件里去写
-            return new_response
+            return response
         else:
             return response
 
@@ -74,4 +75,4 @@ class TencentDownloaderMiddleware:
 
     def spider_opened(self, spider):
         # do some initialization when the spider is opened here
-        pass
+        spider.logger.info('Spider opened: %s' % spider.name)

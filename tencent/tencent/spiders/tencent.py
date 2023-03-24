@@ -5,8 +5,8 @@ from tencent.items import TencentItem
 
 class TencentSpider(scrapy.Spider):
     name = "tencent"
-    allowed_domains = ["news.qq.com"]
-    start_urls = ["https://news.qq.com/"]
+    allowed_domains = ["qq.com"]
+    start_urls = ["https://www.qq.com/"]
     models_urls = []  # 存储相应板块对应详情页的url
 
     # 实例化一个浏览器对象
@@ -14,8 +14,8 @@ class TencentSpider(scrapy.Spider):
         self.bro = webdriver.ChromiumEdge(executable_path='msedgedriver.exe')
 
     def parse(self, response):
-        li_list = response.xpath('/html/body/div/div[1]/div/div/div[1]/div/ul/li')
-        alist = [2, 3, 4]  # 所需要得财经、科技、娱乐板块所在位置
+        li_list = response.xpath('/html/body/div[1]/div[3]/div/ul/li')
+        alist = [2,3]  # 所需要得财经、科技板块所在位置
         for index in alist:
             model_url = li_list[index].xpath('./a/@href').extract_first()
             self.models_urls.append(model_url)
@@ -26,9 +26,9 @@ class TencentSpider(scrapy.Spider):
 
     # 每个板块的新闻都是动态加载出来的，所以必须要处理response
     def parse_model(self, response):  # 解析每一个板块页面中对应的新闻内容的url
-        li_list = response.xpath('/html/body/div/div[4]/div[2]/div/div/ul/li')
+        li_list = response.xpath('/html/body/div[1]/div[4]/div[2]/div/div/ul/li')
         for li in li_list:
-            news_detail = li.xpath('./div/div[1]/h3/a/@href').extract_first()
+            news_detail = li.xpath('./div/h3/a/@href').extract_first()
             # 对新闻的具体内容发出请求
             yield scrapy.Request(url=news_detail, callback=self.parse_detail())
 
